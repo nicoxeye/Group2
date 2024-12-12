@@ -33,7 +33,7 @@ jobs:
 
       - name: "Run tests with coverage"
         run: | 
-          python -m unittest discover tests
+          python -m unittest discover test
 
   lint:
     needs: test
