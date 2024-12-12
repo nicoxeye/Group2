@@ -1,0 +1,86 @@
+name: Unit tests, TODOs to issues and linting
+
+on:
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+permissions: read-all
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+        - name: Set up Python
+          uses: actions/setup-python@v4
+          with:
+            python-version: '3.13'
+        - name: "Install dependencies"
+          run: |
+            python -m pip install --upgrade pip
+            pip install unittest
+
+        - name: "Run tests with coverage"
+          run: | 
+            python -m unittest -vv --cov=src 
+
+  lint:
+    needs: test
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: read
+      # To report GitHub Actions status checks
+      statuses: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # super-linter needs the full git history to get the
+          # list of files that changed across commits
+          fetch-depth: 0
+      - name: Cache super-linter
+        uses: actions/cache@v3
+        with:
+          path: .cache/super-linter
+          key: ${{ runner.os }}-super-linter-${{ hashFiles('**/*.py') }}
+          restore-keys: |
+            ${{ runner.os }}-super-linter-
+      - name: Super-Linter
+        uses: super-linter/super-linter/slim@v7.1.0
+        env:
+          # To report GitHub Actions status checks
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_PYTHON_RUFF: true
+          CACHE_DIR: .cache/super-linter
+
+
+  todo-to-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: "actions/checkout@v4"
+      - name: "TODO to Issue"
+        uses: "alstr/todo-to-issue-action@v5"
+        with:
+          INSERT_ISSUE_URLS: "true"
+          CLOSE_ISSUES: "true"
+          AUTO_ASSIGN: "true"
+      - name: Set Git user
+        run: |
+          npm install -g todo-md-cli
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Commit and Push Changes
+        run: |
+          git add -A
+          if [[ `git status --porcelain` ]]; then
+            git commit -m "Automatically added GitHub issue links to TODOs"
+            git push origin main
+          else
+            echo "No changes to commit"
+          fi
