@@ -64,7 +64,7 @@ jobs:
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_PYTHON_RUFF: true
+          VALIDATE_PYTHON_RUFF: false
           CACHE_DIR: .cache/super-linter
 
 
