@@ -21,11 +21,11 @@ jobs:
         - name: "Install dependencies"
           run: |
             python -m pip install --upgrade pip
-            pip install unittest
+            pip install -r requirements.txt
 
         - name: "Run tests with coverage"
           run: | 
-            python -m unittest -vv --cov=src 
+            python -m unittest discover tests
 
   lint:
     needs: test
