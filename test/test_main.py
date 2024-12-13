@@ -149,7 +149,6 @@ class TestMarkAttendance(unittest.TestCase):
         self.assertTrue(students[0]["present"])  # should be marked as present for both
         self.assertTrue(students[1]["present"])  
 
-
     def test_attendance_mark_absent(self):
         # Given
         students = [
@@ -204,4 +203,3 @@ class TestPresenceFunction(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
