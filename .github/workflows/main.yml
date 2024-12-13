@@ -60,6 +60,9 @@ jobs:
 
   todo-to-issue:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
     steps:
       - uses: "actions/checkout@v4"
       - name: "TODO to Issue"
