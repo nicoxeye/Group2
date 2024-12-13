@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import mock_open, patch
-from main import import_from_file, export_attendance, add_student, student_data, presence_function, mark_attenfance
+from main import import_from_file, export_attendance, add_student, student_data, presence_function, mark_attendance
 
 class TestImport(unittest.TestCase):
 
@@ -57,8 +57,8 @@ class TestImport(unittest.TestCase):
         #When
         # patch "builtins.open" so it returns mock_data when the file is opened
         with patch("builtins.open", mock_open(read_data=mock_data)):
-            result = import_from_file(mock_data)
-        
+            result = import_from_file("students.csv") 
+
         # expected
         expected = [
             {'first_name': 'Jane', 'last_name': 'Smith', 'present': False} ] #skips john
@@ -71,9 +71,8 @@ class TestImport(unittest.TestCase):
         
         #When
         # patch "builtins.open" so it returns mock_data when the file is opened
-        with patch("builtins.open", error=FileNotFoundError):
+        with patch("builtins.open", side_effect=FileNotFoundError):
             result = import_from_file("students.csv")
-
         # Then
         self.assertEqual(result, [])
 
@@ -124,14 +123,11 @@ class TestAddStudent(unittest.TestCase):
             add_student(first_name, last_name, filename)
 
             #Then
-            mocked_file.assert_called_once_with(filename, 'a', newline='')  # file should be opened in append mode
+            mocked_file.assert_called_once_with(filename, 'a', newline='')
             file_handle = mocked_file()
             file_handle.write.assert_called_with("John,Doe,False\r\n") # carriage return /r <- cause of windows idk ;P
 
-
-    #def test_add_student_to_new_file(self): DIDNT WORK (im going insane)...............................
-
-class TestMarkAttenfance(unittest.TestCase):
+class TestMarkAttendance(unittest.TestCase):
     def test_mark_attenfance_present(self):
         #Given -> a list of students with no attendance recorded
         students = [ #mock_data
@@ -141,7 +137,7 @@ class TestMarkAttenfance(unittest.TestCase):
 
         #When -> mock input to simulate user input of "yes"
         with patch("builtins.input", side_effect=["yes", "yes"]):
-            mark_attenfance(students)
+            mark_attendance(students)
 
         # Then
         self.assertTrue(students[0]["present"])  # should be marked as present fo rboth
@@ -156,7 +152,7 @@ class TestMarkAttenfance(unittest.TestCase):
 
         #When ->> mock input to simulate user input of "no"
         with patch("builtins.input", side_effect=["no", "no"]):
-            mark_attenfance(students)
+            mark_attendance(students)
 
         # Then 
         self.assertFalse(students[0]["present"])  # should be marked as absent for both
@@ -172,6 +168,7 @@ class TestStudentData(unittest.TestCase):
             result = student_data()
         #Then
         self.assertEqual(result, "John Doe")
+
 
 class TestPresenceFunction(unittest.TestCase):
     #input 'yes'

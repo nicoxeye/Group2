@@ -1,199 +1,247 @@
 import os
 import csv
 
-#IMPORT
 def import_from_file(filename="students.csv"):
+    """
+    Import students from a CSV file.
+
+    Args:
+        filename (str): Path to the CSV file.
+
+    Returns:
+        list: List of student dictionaries.
+    """
     students = []
     try:
-        with open(filename, 'r', newline='') as file: #'r' read file, newline='' to manage newline characters correctly in CSV files
+        with open(filename, "r", newline="") as file:
             for line in file:
-                cut_parts = line.strip().split(',') #delete whitespaces and create a seperator as ,
-                #in the file: first name, last name
-                if len(cut_parts) == 2:  #no attendance provided
-                    students.append({
-                        'first_name': cut_parts[0].strip(),
-                        'last_name': cut_parts[1].strip(),
-                        'present': False  #default to False
-                    })
-                elif len(cut_parts) == 3:  #attendance provided
-                    students.append({
-                        'first_name': cut_parts[0].strip(),
-                        'last_name': cut_parts[1].strip(),
-                        'present': cut_parts[2].strip().lower() == 'yes'  #convert to boolean, 'yes' == True
-                    })
-                else: print('Something went wrong when importing the file.')
-        return students
+                cut_parts = line.strip().split(",")
+                if len(cut_parts) == 2:
+                    students.append(
+                        {"first_name": cut_parts[0].strip(), "last_name": cut_parts[1].strip(), "present": False}
+                    )
+                elif len(cut_parts) == 3:
+                    students.append(
+                        {
+                            "first_name": cut_parts[0].strip(),
+                            "last_name": cut_parts[1].strip(),
+                            "present": cut_parts[2].strip().lower() == "yes",
+                        }
+                    )
+                else:
+                    print("Skipping malformed line in the file.")
     except FileNotFoundError:
-        print(f"The file '{filename}' was not found.") #added if filenotfound exception
-
-#EXPORT
+        print(f"Error: The file '{filename}' was not found.")
+    return students
 
 def export_attendance(students, filename="students.csv"):
-     with open(filename, 'w', newline='') as file: #'w' write file
+    """
+    Export student attendance to a CSV file.
+
+    Args:
+        students (list): List of student dictionaries.
+        filename (str): Path to the output CSV file.
+    """
+    with open(filename, 'w', newline='') as file:
         for student in students:
             present = 'yes' if student['present'] else 'no'
             file.write(f"{student['first_name']},{student['last_name']},{present}\n")
 
-            
-#ADDING NEW STUDENTS AND UPDATING DATABASE
-
-# function that adds new student to the list and saves it to the file
 def add_student(first_name, last_name, filename="students.csv"):
+    """
+    Add a new student to the database.
+
+    Args:
+        first_name (str): Student's first name.
+        last_name (str): Student's last name.
+        filename (str): Path to the CSV file.
+    """
     file_exists = os.path.isfile(filename)
     
     with open(filename, 'a', newline='') as file:
         writer = csv.writer(file)
-        
         if not file_exists:
             writer.writerow(["first_name", "last_name", "present"])
-        
-        # "present" is false by default
         writer.writerow([first_name, last_name, False])
     print(f"Student {first_name} {last_name} was added to {filename}.")
 
+def edit_student(
+      old_first_name, old_last_name, new_first_name, new_last_name, filename="students.csv"):
+    """
+    Edit a student's information.
 
-# function that edits student list
-def edit_student(old_first_name, old_last_name, new_first_name, new_last_name, filename="students.csv"):
+    Args:
+        old_first_name (str): Old first name.
+        old_last_name (str): Old last name.
+        new_first_name (str): New first name.
+        new_last_name (str): New last name.
+        filename (str): Path to the CSV file.
+    """
     students = []
     updated = False
-
-    with open(filename, 'r') as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            if row["first_name"] == old_first_name and row["last_name"] == old_last_name:
-                row["first_name"] = new_first_name
-                row["last_name"] = new_last_name
-                updated = True
-            students.append(row)
-    
-    with open(filename, 'w', newline='') as file:
-        writer = csv.DictWriter(file, fieldnames=["first_name", "last_name", "present"])
-        writer.writeheader()
-        writer.writerows(students)
-    
-    if updated:
-        print(f"Student: {old_first_name} {old_last_name} has been updated to {new_first_name} {new_last_name}.")
-    else:
-        print("The student hasn't been found")
-
-            
-#TESTING
-#if __name__ == "__main__": #
-    #students = import_from_file('C:\\Users\\PC\\Downloads\\attendance.csv')
-    #add_student("John", "Doe")
-    #edit_student("John", "Doe", "Jane", "Doe")
-    #export_attendance(students, 'C:\\Users\\PC\\Downloads\\attendance.csv')
-
-# CHECKING ATTENDANCE
-
-def mark_attenfance(students):
-    print("Checking attendance: ")
-    for student in students:  
-
-        # display current attendance status
-        if student['present'] is None: #if there's no previous attendance recorded
-            print(f"{student['first_name']} {student['last_name']} has not had their attendance recorded yet.")
+    try:
+        with open(filename, "r") as file:
+            reader = csv.DictReader(file)
+            for row in reader:
+                if (
+                    row["first_name"] == old_first_name
+                    and row["last_name"] == old_last_name
+                ):
+                    row["first_name"] = new_first_name
+                    row["last_name"] = new_last_name
+                    updated = True
+                students.append(row)
+        with open(filename, "w", newline="") as file:
+            writer = csv.DictWriter(
+                file, fieldnames=["first_name", "last_name", "present"]
+            )
+            writer.writeheader()
+            writer.writerows(students)
+        if updated:
+            print(
+                f"Student: {old_first_name} {old_last_name} has been updated to {new_first_name} {new_last_name}."
+            )
         else:
-            status = "present" if student['present'] else "absent"
-            print(f"{student['first_name']} {student['last_name']} is currently {status}")
-        
-        # ask user for attendance status
-        new_status = input(f"Is {student['first_name']} {student['last_name']} present today? (yes/no): ").strip().lower()
+            print("The student hasn't been found.")
+    except FileNotFoundError:
+        print(f"Error: The file '{filename}' does not exist.")
 
-        # update attendance based on user input
+def mark_attendance(students):
+    """
+    Check and update student attendance.
+
+    Args:
+        students (list): List of student dictionaries.
+    """
+    print("Checking attendance:")
+    for student in students:
+        status = "present" if student["present"] else "absent"
+        print(f"{student['first_name']} {student['last_name']} is currently {status}.")
+        new_status = input(
+            f"Is {student['first_name']} {student['last_name']} present today? (yes/no): "
+        ).strip().lower()
         if new_status == "yes":
-            student['present'] = True # Mark as present
+            student["present"] = True
         elif new_status == "no":
-            student['present'] = False # Mark as absent
-        else: 
+            student["present"] = False
+        else:
             print("Invalid input, please enter 'yes' or 'no'.")
 
-#MANAGING STUDENT'S DATA:
 def student_data():
- student_firstName = input('Enter students first name: ')
- student_lastName = input('Enter students last name: ')
- return f"{student_firstName} {student_lastName}"
+    """
+    Collect student data from user input.
+
+    Returns:
+        dict: A dictionary containing the student's first and last names.
+    """
+    while True:
+        student_first_name = input("Enter student's first name: ").strip()
+        student_last_name = input("Enter student's last name: ").strip()
+        if student_first_name and student_last_name:
+            return f"{student_first_name} {student_last_name}" 
+        print("Both first and last names are required. Please try again.")
 
 def presence_function():
+    """
+    Ask the user if the student was present.
+
+    Returns:
+        bool: True if present, False if absent.
+    """
     presence = input("Was the student present? (yes/no): ")
-    if (presence.lower() == 'yes'):
-        return 'PRESENT'
-    elif (presence.lower() == 'no'):
-        return 'ABSENT'
+    if presence.lower() == 'yes':
+        return 'PRESENT'  # Ensure this returns a string
+    elif presence.lower() == 'no':
+        return 'ABSENT'  # Ensure this returns a string
     else:
-      print("Invalid output. Please try again. ")
-      return presence_function()
+        print("Invalid output. Please try again. ")
+        return presence_function()
 
-# CREATING 'ATTENDANCE_DICTIONARY' AND CREATING 'STUDENTS' LIST - a list where every element is a dictionary
+
 def manage_attendance():
-  attendance_dictionary = {}
-  student_id = 1
-  while True:
-   student = student_data()
-   attendance_status = presence_function()
-   attendance_dictionary[student_id] = [student, attendance_status]
-   student_id += 1
+    """
+    Manage attendance for multiple students.
 
-   add_student = input("Want to add another student? (yes/no):")
-   print()
-   if add_student.lower() != 'yes':
-     break
+    Returns:
+        dict: A dictionary with student IDs as keys and their details as values.
+    """
+    attendance_dictionary = {}
+    student_id = 1
 
-  #EXPORT to .csv file (integration with export_attendance())
-  students = [
-    {
-        "first_name": s.split(' ')[0],
-        "last_name": s.split(' ')[1],
-        "present": a == "PRESENT"
-    }
-    for s_id, (s, a) in attendance_dictionary.items()
-  ]
+    while True:
+        student = student_data()
+        attendance_status = presence_function()
+        attendance_dictionary[student_id] = {
+            "first_name": student["first_name"],
+            "last_name": student["last_name"],
+            "present": attendance_status
+        }
+        student_id += 1
 
-  export_attendance(students)
+        add_student = input("Want to add another student? (yes/no): ").strip().lower()
+        if add_student != "yes":
+            break
 
-  #printing students' list:
-  print("ATTENDANCE LIST:")
-  for s_id, (student, status) in attendance_dictionary.items():
-    print(f"STUDENT ID: {s_id}, NAME: {student}, ATTENDANCE STATUS: {status}")
-  print()
-  return attendance_dictionary
+    # Export attendance if desired
+    save = input("Do you want to save the attendance list to a file? (yes/no): ").strip().lower()
+    if save == "yes":
+        students = list(attendance_dictionary.values())
+        export_attendance(students)
 
-# EDITING STUDENT'S ATTENDANCE STATUS
+    print("\nATTENDANCE LIST:")
+    for s_id, details in attendance_dictionary.items():
+        status = "Present" if details["present"] else "Absent"
+        print(f"ID: {s_id}, Name: {details['first_name']} {details['last_name']}, Status: {status}")
+
+    return attendance_dictionary
+
 def edit_attendance(attendance_dictionary, student_id):
-  if student_id in attendance_dictionary:
-    new_attendance_status = presence_function()
-    attendance_dictionary[student_id][1] = new_attendance_status
-  else:
-    print("Student not found")
-  return attendance_dictionary
-  
-#MENU
+    """
+    Edit the attendance status of a specific student.
+
+    Args:
+        attendance_dictionary (dict): The dictionary containing attendance data.
+        student_id (int): The ID of the student to edit.
+
+    Returns:
+        dict: Updated attendance dictionary.
+    """
+    if student_id in attendance_dictionary:
+        print(f"Editing attendance for: {attendance_dictionary[student_id]['first_name']} {attendance_dictionary[student_id]['last_name']}")
+        new_attendance_status = presence_function()
+        attendance_dictionary[student_id]["present"] = new_attendance_status
+        print("Attendance updated successfully.")
+    else:
+        print("Student not found.")
+    return attendance_dictionary
+
 if __name__ == "__main__":
-  attendance = {}
-  students = []
-  while True:
-   print("MENU:")
-   print("1. Manage attendance")
-   print("2. Edit attendance")
-   print("3. Import students")
-   print("4. Export attendance")
-   print("5. Exit")
-   choice = input("Choose your option: ")
+    students = import_from_file()
+    while True:
+        print("\nMENU:")
+        print("1. Check attendance")
+        print("2. Add student")
+        print("3. Edit student")
+        print("4. Export attendance")
+        print("5. Exit")
+        choice = input("Choose your option: ").strip()
 
-
-   if choice == "1":
-      attendance = manage_attendance()
-   elif choice == "2":
-      student_id = int(input("Enter student ID: "))
-      edit_attendance(attendance, student_id)
-      print("Updated attendance: ", attendance)
-   elif choice == "3":
-      students = import_from_file()
-      print("Imported students: ", students)
-   elif choice == "4":
-      export_attendance(students)
-   elif choice == "5":
-      print("Exiting the program.")
-      break
-   else:
-      print("Invalid choice. Please try again.")
+        if choice == "1":
+            mark_attendance(students)
+        elif choice == "2":
+            first_name = input("Enter first name: ").strip()
+            last_name = input("Enter last name: ").strip()
+            add_student(first_name, last_name)
+        elif choice == "3":
+            old_fn = input("Enter old first name: ").strip()
+            old_ln = input("Enter old last name: ").strip()
+            new_fn = input("Enter new first name: ").strip()
+            new_ln = input("Enter new last name: ").strip()
+            edit_student(old_fn, old_ln, new_fn, new_ln)
+        elif choice == "4":
+            export_attendance(students)
+        elif choice == "5":
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
