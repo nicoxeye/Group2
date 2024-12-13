@@ -60,7 +60,7 @@ def add_student(first_name, last_name, filename="students.csv"):
         filename (str): Path to the CSV file.
     """
     file_exists = os.path.isfile(filename)
-    
+
     with open(filename, 'a', newline='') as file:
         writer = csv.writer(file)
         if not file_exists:
@@ -112,6 +112,7 @@ def edit_student(
     except FileNotFoundError:
         print(f"Error: The file '{filename}' does not exist.")
 
+
 def mark_attendance(students):
     """
     Check and update student attendance.
@@ -135,6 +136,7 @@ def mark_attendance(students):
         else:
             print("Invalid input, please enter 'yes' or 'no'.")
 
+
 def student_data():
     """
     Collect student data from user input.
@@ -148,6 +150,7 @@ def student_data():
         if student_first_name and student_last_name:
             return f"{student_first_name} {student_last_name}" 
         print("Both first and last names are required. Please try again.")
+
 
 def presence_function():
     """
@@ -195,13 +198,13 @@ def manage_attendance():
         students = list(attendance_dictionary.values())
         export_attendance(students)
 
-
     print("\nATTENDANCE LIST:")
     for s_id, details in attendance_dictionary.items():
         status = "Present" if details["present"] else "Absent"
         print(f"ID: {s_id}, Name: {details['first_name']} {details['last_name']}, Status: {status}")
 
     return attendance_dictionary
+
 
 def edit_attendance(attendance_dictionary, student_id):
     """
@@ -224,6 +227,7 @@ def edit_attendance(attendance_dictionary, student_id):
     else:
         print("Student not found.")
     return attendance_dictionary
+
 
 if __name__ == "__main__":
     students = import_from_file()
