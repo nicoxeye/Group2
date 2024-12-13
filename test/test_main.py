@@ -17,14 +17,14 @@ class TestImport(unittest.TestCase):
     def test_import_with_valid_data(self):
         # Given
         mock_data = "John, Doe, yes\nJane, Smith, no"
-        
+
         # When
         with patch("builtins.open", mock_open(read_data=mock_data)):
             result = import_from_file(mock_data)
-        
+
         # Expected
         expected = [
-            {'first_name': 'John', 'last_name': 'Doe', 'present': True}, 
+            {'first_name': 'John', 'last_name': 'Doe', 'present': True},
             {'first_name': 'Jane', 'last_name': 'Smith', 'present': False}
         ]
 
@@ -34,11 +34,11 @@ class TestImport(unittest.TestCase):
     def test_import_without_present(self):  # automatic 'present' -> set to False if not given in the file
         # Given
         mock_data = "John, Doe\nJane, Smith"
-        
+
         # When
         with patch("builtins.open", mock_open(read_data=mock_data)):
             result = import_from_file(mock_data)
-        
+
         # Expected
         expected = [
             {'first_name': 'John', 'last_name': 'Doe', 'present': False},
@@ -48,10 +48,10 @@ class TestImport(unittest.TestCase):
         # Then
         self.assertEqual(result, expected)
 
-    def test_import_with_empty_file(self): 
+    def test_import_with_empty_file(self):
         # Given
         mock_data = ""
-        
+
         # When
         with patch("builtins.open", mock_open(read_data=mock_data)):
             result = import_from_file(mock_data)
@@ -62,10 +62,10 @@ class TestImport(unittest.TestCase):
     def test_import_with_invalid_format(self):
         # Given
         mock_data = "John, Doe, yes, 19\nJane, Smith, no"
-        
+
         # When
         with patch("builtins.open", mock_open(read_data=mock_data)):
-            result = import_from_file("students.csv") 
+            result = import_from_file("students.csv")
 
         # Expected
         expected = [
@@ -76,8 +76,8 @@ class TestImport(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_import_with_missing_file(self):
-        # Given - no mock since the file doesn't exist 
-        
+        # Given - no mock since the file doesn't exist
+
         # When
         with patch("builtins.open", side_effect=FileNotFoundError):
             result = import_from_file("students.csv")
@@ -90,7 +90,7 @@ class TestExport(unittest.TestCase):
     """
     students = [{'first_name': 'John', 'last_name': 'Doe', 'present': True},
     {'first_name': 'Jane', 'last_name': 'Smith', 'present': False}]
-    
+
     file will contain:
     John,Doe,yes
     Jane,Smith,no
@@ -99,10 +99,10 @@ class TestExport(unittest.TestCase):
         # Given - a list of students
         mock_students_data = [{'first_name': 'John', 'last_name': 'Doe', 'present': True},
                               {'first_name': 'Jane', 'last_name': 'Smith', 'present': False}]
-        
+
         # Expected
         expected = "John,Doe,yes\nJane,Smith,no\n"
-        
+
         with patch("builtins.open", mock_open()) as mocked_open:
             # When
             export_attendance(mock_students_data, "students.csv")
@@ -147,7 +147,7 @@ class TestMarkAttendance(unittest.TestCase):
 
         # Then
         self.assertTrue(students[0]["present"])  # should be marked as present for both
-        self.assertTrue(students[1]["present"])  
+        self.assertTrue(students[1]["present"])
 
     def test_attendance_mark_absent(self):
         # Given
@@ -160,7 +160,7 @@ class TestMarkAttendance(unittest.TestCase):
         with patch("builtins.input", side_effect=["no", "no"]):
             mark_attendance(students)
 
-        # Then 
+        # Then
         self.assertFalse(students[0]["present"])  # should be marked as absent for both
         self.assertFalse(students[1]["present"])
 
@@ -170,11 +170,11 @@ class TestStudentData(unittest.TestCase):
         # Given
         first_name = "John"
         last_name = "Doe"
-        
+
         # When
         with patch('builtins.input', side_effect=[first_name, last_name]):
             result = student_data()
-        
+
         # Then
         self.assertEqual(result, "John Doe")
 

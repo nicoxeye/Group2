@@ -44,6 +44,7 @@ def export_attendance(students, filename="students.csv"):
         students (list): List of student dictionaries.
         filename (str): Path to the output CSV file.
     """
+    # TODO: Testing if it adds to issue
     with open(filename, 'w', newline='') as file:
         for student in students:
             present = 'yes' if student['present'] else 'no'
@@ -221,8 +222,8 @@ def edit_attendance(attendance_dictionary, student_id):
 
     if student_id in attendance_dictionary:
         print(f"Editing attendance for: "
-            f"{attendance_dictionary[student_id]['first_name']} "
-            f"{attendance_dictionary[student_id]['last_name']}")
+              f"{attendance_dictionary[student_id]['first_name']} "
+              f"{attendance_dictionary[student_id]['last_name']}")
         new_attendance_status = presence_function()
         attendance_dictionary[student_id]["present"] = new_attendance_status
         print("Attendance updated successfully.")
