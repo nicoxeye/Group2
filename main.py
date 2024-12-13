@@ -220,8 +220,9 @@ def edit_attendance(attendance_dictionary, student_id):
     """
 
     if student_id in attendance_dictionary:
-        print(f"Editing attendance for: {attendance_dictionary[student_id]['first_name']} 
-              {attendance_dictionary[student_id]['last_name']}")
+        print(f"Editing attendance for: "
+            f"{attendance_dictionary[student_id]['first_name']} "
+            f"{attendance_dictionary[student_id]['last_name']}")
         new_attendance_status = presence_function()
         attendance_dictionary[student_id]["present"] = new_attendance_status
         print("Attendance updated successfully.")
@@ -260,4 +261,3 @@ if __name__ == "__main__":
             break
         else:
             print("Invalid choice. Please try again.")
-            
