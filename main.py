@@ -3,6 +3,7 @@ import os
 
 
 def import_from_file(filename="students.csv"):
+# TODO: Testing if it adds to issue.
     """
     Import students from a CSV file.
 
@@ -44,7 +45,6 @@ def export_attendance(students, filename="students.csv"):
         students (list): List of student dictionaries.
         filename (str): Path to the output CSV file.
     """
-    # TODO: Testing if it adds to issue
     with open(filename, 'w', newline='') as file:
         for student in students:
             present = 'yes' if student['present'] else 'no'
@@ -208,6 +208,7 @@ def manage_attendance():
 
 
 def edit_attendance(attendance_dictionary, student_id):
+# TODO: Add tests to this function.
     """
     Edit the attendance status of a specific student.
 
