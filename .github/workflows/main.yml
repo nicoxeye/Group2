@@ -3,10 +3,10 @@ name: Unit tests, TODOs to issues and linting
 on:
   push:
     branches:
-    - master
+      - master
   pull_request:
     branches:
-    - master
+      - master
 
 permissions: read-all
 
@@ -32,7 +32,7 @@ jobs:
           python -m pip install --upgrade pip
 
       - name: "Run tests with coverage"
-        run: | 
+        run: |
           python -m unittest discover test
 
   lint:
@@ -42,23 +42,21 @@ jobs:
     permissions:
       contents: read
       packages: read
-      # To report GitHub Actions status checks
       statuses: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # super-linter needs the full git history to get the
-          # list of files that changed across commits
           fetch-depth: 0
+      - name: Prettier format
+        run: npx prettier --write .github/workflows/**/*.yml
       - name: Super-Linter
         uses: super-linter/super-linter/slim@v7.1.0
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_PYTHON_RUFF: false
-
 
   todo-to-issue:
     runs-on: ubuntu-latest
