@@ -3,7 +3,7 @@ import os
 
 
 def import_from_file(filename="students.csv"):
-# TODO: Testing if it adds to issue.
+# TODO: New test issue.
     """
     Import students from a CSV file.
 
@@ -208,7 +208,7 @@ def manage_attendance():
 
 
 def edit_attendance(attendance_dictionary, student_id):
-# TODO: Add tests to this function.
+# TODO: Add tests to this function someday.
     """
     Edit the attendance status of a specific student.
 
