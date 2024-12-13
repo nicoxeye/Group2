@@ -56,7 +56,7 @@ jobs:
         env:
           # To report GitHub Actions status checks
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_PYTHON_RUFF: false
+          VALIDATE_PYTHON_RUFF: true
 
   todo-to-issue:
     runs-on: ubuntu-latest
