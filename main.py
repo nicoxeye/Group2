@@ -1,5 +1,6 @@
-import os
 import csv
+import os
+
 
 def import_from_file(filename="students.csv"):
     """
@@ -34,6 +35,7 @@ def import_from_file(filename="students.csv"):
         print(f"Error: The file '{filename}' was not found.")
     return students
 
+
 def export_attendance(students, filename="students.csv"):
     """
     Export student attendance to a CSV file.
@@ -46,6 +48,7 @@ def export_attendance(students, filename="students.csv"):
         for student in students:
             present = 'yes' if student['present'] else 'no'
             file.write(f"{student['first_name']},{student['last_name']},{present}\n")
+
 
 def add_student(first_name, last_name, filename="students.csv"):
     """
@@ -63,7 +66,9 @@ def add_student(first_name, last_name, filename="students.csv"):
         if not file_exists:
             writer.writerow(["first_name", "last_name", "present"])
         writer.writerow([first_name, last_name, False])
+
     print(f"Student {first_name} {last_name} was added to {filename}.")
+
 
 def edit_student(
       old_first_name, old_last_name, new_first_name, new_last_name, filename="students.csv"):
@@ -101,6 +106,7 @@ def edit_student(
             print(
                 f"Student: {old_first_name} {old_last_name} has been updated to {new_first_name} {new_last_name}."
             )
+
         else:
             print("The student hasn't been found.")
     except FileNotFoundError:
@@ -122,19 +128,21 @@ def mark_attendance(students):
         ).strip().lower()
         if new_status == "yes":
             student["present"] = True
+
         elif new_status == "no":
             student["present"] = False
+
         else:
             print("Invalid input, please enter 'yes' or 'no'.")
 
 def student_data():
     """
     Collect student data from user input.
-
     Returns:
         dict: A dictionary containing the student's first and last names.
     """
     while True:
+
         student_first_name = input("Enter student's first name: ").strip()
         student_last_name = input("Enter student's last name: ").strip()
         if student_first_name and student_last_name:
@@ -182,11 +190,11 @@ def manage_attendance():
         if add_student != "yes":
             break
 
-    # Export attendance if desired
     save = input("Do you want to save the attendance list to a file? (yes/no): ").strip().lower()
     if save == "yes":
         students = list(attendance_dictionary.values())
         export_attendance(students)
+
 
     print("\nATTENDANCE LIST:")
     for s_id, details in attendance_dictionary.items():
@@ -200,12 +208,14 @@ def edit_attendance(attendance_dictionary, student_id):
     Edit the attendance status of a specific student.
 
     Args:
-        attendance_dictionary (dict): The dictionary containing attendance data.
+        attendance_dictionary (dict):
+        The dictionary containing attendance data.
         student_id (int): The ID of the student to edit.
 
     Returns:
         dict: Updated attendance dictionary.
     """
+
     if student_id in attendance_dictionary:
         print(f"Editing attendance for: {attendance_dictionary[student_id]['first_name']} {attendance_dictionary[student_id]['last_name']}")
         new_attendance_status = presence_function()

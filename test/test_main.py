@@ -1,6 +1,13 @@
 import unittest
 from unittest.mock import mock_open, patch
-from main import import_from_file, export_attendance, add_student, student_data, presence_function, mark_attendance
+from main import (
+      add_student,
+      export_attendance,
+      import_from_file,
+      mark_attendance,
+      presence_function,
+      student_data,
+)
 
 class TestImport(unittest.TestCase):
 
