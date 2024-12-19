@@ -2,7 +2,7 @@
 import unittest
 from unittest.mock import mock_open, patch
 
-from main import (
+from src.main import (
     add_student,
     export_attendance,
     import_from_file,
